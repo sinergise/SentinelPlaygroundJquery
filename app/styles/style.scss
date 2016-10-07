@@ -1,0 +1,1030 @@
+@import url("../../node_modules/leaflet/dist/leaflet.css");
+@import url("../../node_modules/dragula/dist/dragula.css");
+@import url("../../node_modules/font-awesome/css/font-awesome.css");
+@import url('../../node_modules/codemirror/lib/codemirror.css');
+@import url('../../node_modules/codemirror/theme/dracula.css');
+@import url('../../node_modules/nprogress/nprogress.css');
+@import "geosuggest";
+@import url('../../node_modules/jquery-ui/themes/base/base.css');
+@import url('../../node_modules/jquery-ui/themes/base/datepicker.css');
+@import url('../../node_modules/jquery-ui/themes/base/theme.css');
+
+$primaryCol: #959c08;
+$mainDark: #191a25;
+$mainMedium: #22232d;
+$mainLight: #3b3d4d;
+$textColor: #868fa0;
+
+body, html, #app {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#nprogress .bar {
+	background: $primaryCol;
+	box-shadow: 0 0 10px $primaryCol, 0 0 5px $primaryCol;
+}
+
+#messages a {
+	color: #fff;
+}
+#mainLoader {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top:0;
+	bottom:0;
+	z-index: 1000;
+	color:white;
+	background: #222;
+
+	& > div {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin: -50px;
+		width: 100px;
+		text-align: center;
+	}
+}
+.ui-tabs-panel {
+	overflow: auto;
+}
+#mapid {
+    position: relative;
+    height: 100%;
+    // width: calc(100% - 370px);
+    width: 100%;
+}
+#toggleSettings {
+	display: none;
+}
+
+#floatSettings {
+	position: absolute;
+	left: 0;
+	top: 0;
+	margin: 15px;
+	background: $mainLight;
+	color: $textColor;
+	width: 340px;
+	box-shadow: 0 2px 5px #000;
+	overflow-y: auto;
+	overflow-x: visible;
+	font-size: 13px;
+	max-height: calc(100% - 30px);
+	transition: all ease 0.4s;
+
+	&.open {
+		margin-left: -120%;
+	}
+	
+	h2#logo {
+		margin: 15px;
+		background: url("../images/logo.png") 0 0 no-repeat;
+		min-height: 35px;
+	}
+	h3 abbr {
+		font-weight: normal;
+		font-size: 13px;
+		border-bottom: none;
+	}
+
+	h4 {
+		margin-bottom: 5px;
+		font-weight: normal;
+		font-size: 14px;
+	}
+}
+
+#cloudFloat {
+	margin-left: 180px;
+}
+#cloudSliderWrap {
+	position: absolute;
+	background: $mainLight;
+	padding: 5px;
+	left: 50%;
+	top: 110%;
+	margin-left: -100px;
+	width: 200px;
+}
+#liveDate1 {
+	background: none;
+	border: none;
+	color: #fff;
+	box-shadow: none;
+	padding: 0;
+}
+#outOfBounds {
+	text-align: center;
+	color: darkorange;
+	background: $mainMedium;
+	padding: 10px;
+	i {
+		margin-right: 6px;
+	}
+}
+#bandsPanel a {
+	font-size: 14px;
+	display: block;
+	color: $textColor;
+	clear: both;
+	cursor: pointer;
+	border-bottom: 1px solid #313341;
+	border-top: 1px solid #3d3f4f;
+	padding-top: 15px;
+	transition: all ease 0.4s;
+
+	small {
+		display: block;
+		color: #636579;
+	}
+	img, i {
+		width: 40px;
+		height: 40px;
+		background: $mainMedium;
+		line-height: 40px;
+		text-align: center;
+		float: left;
+		margin: -7px 10px 10px;
+		border-radius: 40px;
+		border: 3px solid transparent;
+	}
+	&:hover, &.active {
+		background: #4f515f;
+		color: #fff;
+		small {
+			color: #9fa1b5;
+		}
+	}
+	&.active {
+		color: #fff;
+		small {
+			color: #9fa1b5;
+		}
+		img,i {
+			border-color: $primaryCol;
+		}
+	}
+	&:after {
+		display:block;
+		content :"";
+		clear: both;
+	}
+}
+
+.fa-calendar {
+	cursor: pointer;
+}
+.ui-dialog {
+	z-index: 1000;
+}
+.ui-dialog.ui-widget, .modal-default {
+	border: none;
+	box-shadow: 0 0 10px rgba(0,0,0,.4);
+	padding: 0;
+	background: #fff;
+}
+.ui-dialog .ui-dialog-content {
+	padding: 0;
+}
+.ui-dialog .ui-dialog-titlebar,
+.modal-header.popups-title {
+	background: $primaryCol;
+	color: #fff;
+	height: 23px;
+	padding: 0.4em 1em;
+	font-weight: bold;
+	text-shadow: 0 1px 0 #666;
+}
+
+.buttonPanel {
+  padding: 10px;
+  text-align: center;
+  clear: both;
+  background: $mainMedium;
+}
+
+#effectsPanel {
+	h4 {
+		float: left;
+		clear: left;
+		margin-top: 0;
+		margin-bottom: 20px;
+		& + span {
+			float: right;
+			margin-top: 8px;
+			display: inline-block;
+			width: 40px;
+			text-align: right;
+		}
+	}
+	.ui-slider {
+		width: 120px;
+		float: right;
+		margin-top: 8px;
+		margin-bottom: 10px;
+	}
+}
+#effectsCBs {
+	
+	input {
+		visibility: hidden;
+		position: absolute;
+
+		& + label {
+		display: block;
+		position: relative;
+		padding-top: 8px;
+		min-height: 20px;
+		margin-bottom: 10px;
+
+			& + abbr { display: none; }
+			&:before {
+				width: 46px;
+				height: 22px;
+				border-radius: 22px;
+				background: $mainMedium;
+				content: "";
+				display: block;
+				position: absolute;
+				right: 0;
+				top: 7px;
+				cursor: pointer;
+			}
+			&:after {
+				cursor: pointer;
+				width: 18px;
+				border-radius: 18px;
+				height: 18px;
+				content: "";
+				display: block;
+				position: absolute;
+				right: 24px;
+				top: 9px;
+				background: #788190;
+				transition: all ease 0.4s;
+			}
+		}
+		&:checked +label:after {
+			right: 4px;
+			background: $primaryCol;
+		}
+	} 
+}
+
+.handle {
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    background-color: $primaryCol;
+    color: white;
+    cursor: pointer;
+
+    &.active {
+        background-color: grey;
+    }
+}
+
+.loadingDialog .ui-dialog-titlebar {
+	display: none;
+}
+#loadingDialog {
+	margin: 20px;
+	text-align: center;
+	.loader {
+		margin-bottom: 20px;
+	}
+}
+
+.btn, .form-submit, .date-picker-wrapper .drp_top-bar .apply-btn,
+.joyride-tip-guide .joyride-next-tip {
+	border-radius: 6px;
+	// border: 2px solid $primaryCol;
+	border: none;
+	background: $primaryCol;
+	color: #fff;
+	text-transform: uppercase;
+	padding: 6px 10px;
+	font-size: 15px;
+	display: inline-block;
+	vertical-align: middle;
+	text-decoration: none;
+	cursor: pointer;
+}
+.ui-widget-content .btn:hover,
+.joyride-tip-guide .joyride-next-tip:hover,
+.btn:hover, .form-submit:hover,
+.date-picker-wrapper .drp_top-bar .apply-btn {
+	background: $primaryCol;
+	// border: 2px solid $primaryCol;
+	color: #fff;
+	transition: all ease 0.4s;
+}
+.btn.secondary {
+	background: $mainMedium;
+}
+.btn[disabled], .btn[disabled]:hover {
+	color: #666;
+	// border-color: #eee;
+	background: #eee;
+	cursor: default;
+}
+.bar {
+    position: relative;
+    background: #ddd;
+}
+
+.bar.bar-1 {
+    background: #f00;
+}
+
+.bar.bar-2 {
+    background: #0f0;
+}
+
+.horizontal-slider {
+
+    .bar {
+        top: 20px;
+        height: 10px;
+    }
+    .handle {
+        top: 1px;
+        width: 50px;
+        height: 48px;
+        line-height: 48px;
+    }
+}
+.leaflet-touch .leaflet-control-layers-toggle {
+	height: 36px;
+	width: 36px;
+}
+.leaflet-top.leaflet-right {
+	margin-top: 5px;
+}
+#aboutSentinel {
+    position: absolute;
+    left: 50%;
+	background: $mainMedium;
+	color: $primaryCol;
+    bottom: 0;
+    z-index: 10;
+	padding: 2px;
+	font-size: 11px;
+	text-decoration: none;
+    cursor: pointer; 
+
+}
+.leaflet-container .leaflet-control-attribution {
+	background: $mainMedium;
+	color: rgba(255,255,255,.6);
+
+	a {
+		color: $primaryCol;
+	}
+}
+.highlightDay {
+    background: red !important;
+}
+
+.notification {
+    margin: 10px auto;
+    max-width: 400px;
+    padding: 10px;
+    position: relative;
+	text-align: center;
+	color: orange;
+	font-size: 14px;
+}
+
+#toggleBandMode {
+	position: relative;
+	float: right;
+	background: $mainMedium;
+	width: 72px;
+	height: 28px;
+	border-radius: 30px;
+	padding: 2px;
+	cursor: pointer;
+	i {
+		border-radius: 20px;
+		padding: 2px 4px;
+		position: absolute;
+		left: 8px;
+		top: 6px;
+		color: #fff;
+		font-size: 16px;
+
+		&.script {
+			right: 8px;
+			left: auto;
+		}
+	}
+
+	&:before {
+		position: absolute;
+		left: 4px;
+		top: 4px;
+		width: 30px;
+		height: 25px;
+		border-radius: 25px;
+		content: "";
+		background: $primaryCol;
+		transition: all ease 0.4s;
+	}
+	&.script:before {
+		left: 40px;
+	}
+	
+}
+#advancedBands, #effectsPanel {
+	padding: 15px;
+}
+#editorHolder {
+	clear: both;
+	& > span {
+		margin-top: -25px;
+		float: left;
+	}
+	margin: 5px 0 15px;
+}
+#colorsWrap.ondrag .colHolder {
+	box-shadow: 0 0 15px $primaryCol;
+}
+.colorsContainer {
+    min-height: 50px;
+    background: rgba(255,255,255,.2);
+	border-radius: 6px;
+	text-align: center;
+
+    div {
+        display: inline-block;
+        width: 36px;
+        height: 36px;
+		border-radius: 50px;
+        text-align: center;
+        line-height: 34px;
+        display: inline-block;
+        margin: 5px 10px;
+        cursor: pointer;
+		font-size: 12px;
+		color: #fff;
+		text-shadow: 0 1px 0 #333;
+        background: purple;
+    }
+}
+
+#colorsOutput {
+	text-align: center
+}
+#liveDate1 {
+	width: 100px;
+	padding: 7px;
+	border-radius: 4px;
+	border: none;
+}
+.btn i {
+	margin-right:5px;
+}
+
+select {
+	margin: 3px;
+	padding: 3px;
+	max-width: 200px;
+}
+
+.shareBar {
+	position: absolute;
+	left: 0;
+	bottom:0px;
+	right: 0;
+	background: rgba(0,0,0,.5);
+	color: #fff;
+	padding: 10px;
+	text-align: center;
+	transition: all ease 0.5s;
+}
+#wmsDialog {
+	overflow: hidden;
+	#wmsResult img {
+		display: block;
+	}
+}
+.shareBar a {
+	color: #fff;
+	opacity: .7;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 2px 4px;
+}
+.shareBar a:hover {
+	opacity: 1;
+}
+
+.colHolder {
+    display: inline-block;
+    vertical-align: middle;
+    width: 50px;
+    height:50px;
+    margin: 10px;
+	background: #222;
+	border-radius: 50px;
+    position: relative;
+
+    div {
+		border-radius: 50px;
+        position: absolute;
+        left:0;
+        top: 0;
+		color: #fff;
+        width: inherit;
+        height: inherit;
+        background: purple;
+        text-align: center;
+        line-height: 50px;
+		text-shadow: 0 1px 0 #333;
+
+        &.gu-transit {
+            z-index: 1;
+        }
+    }
+}
+
+#accordion > h3 + div {
+	padding: 0 10px;
+}
+.ui-accordion .ui-accordion-header, #accordion > h3 {
+	background: #333;
+	color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 100%;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+	position: relative;
+	padding: 6px 10px;
+	padding-left: 30px;
+	margin-bottom: 0;
+	cursor: pointer;
+/*     border-bottom: 2px solid $primaryCol;	 */
+}
+.ui-accordion .ui-accordion-header:hover,
+.ui-accordion .ui-accordion-header.ui-state-active,
+#accordion > h3.active {
+	background: $primaryCol;
+}
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+	background: none;
+}
+#editorHeader {
+	cursor: pointer;
+	color: $primaryCol;
+	margin: 10px 0 0;
+	position: relative;
+	padding: 4px 7px;
+	padding-left: 30px;
+	font-size: 14px;
+	font-weight: normal;
+}
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon:before,
+#accordion > h3:before, #editorHeader:before {
+	content: "";
+	position: absolute;
+	left: 13px;
+	top: 8px;
+	display: block;
+	border-style: solid;
+	border-color: transparent transparent transparent #fff;
+	border-width: 6px;
+}
+.ui-accordion .ui-accordion-header.ui-state-active .ui-accordion-header-icon:before,
+#accordion > h3.active:before, #editorHeader.active:before {
+	border-color: transparent transparent #fff transparent;
+	border-width: 0 0 8px 8px;
+}
+.ui-accordion .ui-accordion-content {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    font-size: 12px;
+    overflow: auto;
+    padding: 10px;
+}
+
+div.searchHolder,
+#mapHelp,
+#showHistory,
+.floatItem {
+	position: absolute;
+	top: 16px;
+	left: 384px;
+	background: $mainLight;
+	padding: 0;
+	color: #fff;
+	margin: 0;
+	height: 36px;
+	border: none;
+	overflow: visible;
+	box-shadow: 0 2px 5px #000;
+
+	i {
+		width: 36px;
+		height: 36px;
+		background: $mainDark;
+		color: #fff;
+		text-align: center;
+		line-height: 34px;
+	}
+}
+div.searchHolder ii {
+	margin-right: 0;
+}
+div.searchHolder {
+	left: auto;
+	right: 70px;
+	input {
+		background: none;
+		border: none;
+		height: 30px;
+		line-height: 30px;
+		color: #fff;
+	}
+}
+
+#tabs {
+	ul.ui-widget-header {
+		background: $mainMedium;
+		margin: 0;
+		padding: 0;
+		li {
+			background: none;
+			text-align: center;
+			border: none;
+			border-bottom: 3px solid transparent;
+
+			a {
+				color: $textColor;
+				&:hover, &:hover path {
+					color: #fff;
+					fill: #fff;
+				}
+				path {
+					fill: $textColor;
+				}
+			}
+			&.ui-state-active {
+				border-color: $primaryCol;
+				background: $mainDark;
+				a, svg path {
+					color: #fff;
+					fill: #fff;
+				}
+			}
+			svg, i {
+				display: block;
+				margin: 0 auto 5px;
+				width: 20px;
+				height:20px;
+				font-size:20px;
+			}
+		}
+	}
+	.ui-widget-content {
+		padding: 0;
+		color: $textColor;
+	}
+	&.ui-widget.ui-widget-content {
+		background: none;
+		padding: 0;
+		border: none;
+		color: $textColor;
+		
+	}
+}
+#showHistory {
+	margin-left: 20px;
+	display: none;
+	
+	&.active {
+		background: $primaryCol;
+	}
+}
+
+.ui-widget-overlay {
+	background: rgba(0,0,0,.5);
+	opacity: .6;
+}
+#history {
+	position: fixed;
+	left: 405px;
+	top: 64px;
+	display: none;
+	background: #333;
+	padding:10px;
+	a {
+		opacity: .6;
+		display:block;
+		margin: 2px;
+		color: #fff;
+		cursor: pointer;
+		&:hover {
+			opacity: 1;
+		}
+	}
+}
+#mapHelp i, #showHistory i {
+	margin: 8px;
+}
+#showSearch {
+	cursor: pointer;
+	padding: 0;
+	display: inline-block;
+	vertical-align: middle;
+}
+#showSearch i {
+	color: #fff;
+}
+
+.ui-widget {
+	font-family: inherit;
+	font-size: inherit;
+}
+.ui-widget-content.ui-slider,
+.ui-rangeSlider .ui-rangeSlider-innerBar {
+	border-radius: 5px;
+	border: none;
+	height: 6px;
+	background: $mainDark;
+	box-shadow: 0 2px 2px rgba(0,0,0,.3) inset;
+}
+.ui-rangeSlider .ui-rangeSlider-bar,
+.ui-slider .ui-slider-range {
+	background: $primaryCol;
+	box-shadow: 0 -2px 2px rgba(0,0,0,.3) inset;
+	height: 6px;
+	margin: 3px 0;
+}
+.ui-slider .ui-slider-range {
+	margin-top: 0;
+	border-radius: 5px 0 0 5px;
+}
+.ui-rangeSlider .ui-rangeSlider-handle,
+.ui-slider .ui-slider-handle {
+	background: $primaryCol;
+	border: 2px solid #fff;
+	border-radius: none;
+	width: 16px;
+	height: 16px;
+	margin-top: -4px;
+	border-radius: 20px;
+}
+.ui-rangeSlider .ui-rangeSlider-handle:before {
+	content: "";
+	position: absolute;
+	top: -6px;
+	left: -1px;
+	border-top: 3px solid #555;
+	border-right: 3px solid transparent;
+	border-left: 3px solid transparent;
+}
+.ui-rangeSlider-label {
+	font-size: 11px;
+	background: #555;
+	padding: 3px;
+	margin-bottom: 7px;
+	color: #fff;
+}
+
+.ui-datepicker {
+	width: auto;
+  z-index: 1000 !important;
+}
+.ui-widget-header {
+	background: #f2f2f2;
+	border-radius: 0;
+	border: none;
+}
+.ui-datepicker-calendar th {
+	background: #ccc;
+	border-bottom: 1px solid #aaa;
+}
+.ui-datepicker {
+	z-index: 1000;
+	border-radius: 0;
+	padding: 0;
+	border: none;
+	box-shadow: 0 3px 3px rgba(0,0,0,.5);
+	font-size: 13px;
+}
+.ui-datepicker-calendar td {
+	padding: 2px;
+	border: none;
+	background: none;
+}
+.ui-datepicker-calendar td.ui-datepicker-week-end {
+	background: #f2f2f2;
+}
+.ui-datepicker-calendar td.ui-satate-default:hover {
+	background: #fff;
+}
+.ui-datepicker-calendar td.ui-state-disabled {
+	opacity: .8;
+}
+.ui-datepicker-calendar a {
+	color: $primaryCol;
+	font-weight: bold;
+}
+.ui-datepicker-calendar .ui-state-default {
+	border: none;
+	padding: 4px;
+	background: none;
+}
+.ui-datepicker-calendar .ui-state-default {
+	display: block;
+	background: #999;
+	color: #fff;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	border-radius: 24px;
+	text-align: center;
+	margin: 0 auto;
+}
+.ui-datepicker-calendar .unavailable a {
+	background: #f4f4f4;
+	color:#555;
+}
+.ui-datepicker-week-end.unavailable a {
+	background: #fff;
+}
+.ui-datepicker-calendar span.ui-state-default {
+	color: #666;
+	background: none;
+}
+.ui-datepicker-calendar .ui-state-highlight {
+}
+.ui-datepicker-calendar td.ui-state-disabled a {
+	color: #aaa;
+	font-weight: normal;
+}
+.ui-datepicker-calendar td.ui-datepicker-today span {
+	border-radius: 0;
+	background: #eee;
+	border: 1px solid #ccc;
+}
+.unavailable a:hover,
+.ui-datepicker-calendar a.ui-state-default:hover,
+.ui-datepicker-calendar td.ui-datepicker-current-day a {
+	box-shadow: 0 0 3px #aaa;
+	background: $primaryCol;
+	cursor: default;
+	color: #fff;
+}
+.ui-datepicker-calendar a.ui-state-default:hover {
+	cursor: pointer;
+}
+.ui-datepicker-current-day a {
+	color: #fff;
+}
+
+.gu-mirror {
+    background: rgba(255,255,255,.5);
+    box-shadow: 0 20x 3px rgba(0,0,0,.3);
+	border-radius: 40px;
+	color: #fff;
+	text-align: center;
+	line-height: 40px;
+}
+#dateFloat, #cloudFloat {
+	cursor: pointer;
+}
+
+
+@media screen and (max-width: 700px) {
+	#floatSettings {
+		width: calc(100% - 80px);
+
+		h2#logo {
+			background-position: 43px 0; 
+		}
+	}
+	.btn {
+		font-size: 13px;
+		padding: 5px 8px;
+	}
+	.floatItem {
+		z-index: 1;
+		box-shadow: none;
+		top: 76px;
+		left: auto;
+		right: 10px;
+		border: 1px solid $mainMedium;
+		& > span {
+			width: 0;
+			height: 0;
+			display: block;
+			overflow: hidden;
+		}
+		&.active > span {
+			width: auto;
+			height: auto;
+			overflow: visible;
+			position: absolute;
+			right: 100%;
+			top: 0;
+			bottom: 0;
+			line-height: 28px;
+			text-align: center;
+			background: $mainLight;
+			white-space: nowrap;
+			padding: 2px 5px;
+			box-shadow: 0 2px 10px #000;
+		}
+		#cloudSliderWrap {
+			left: auto;
+			right: 15px;
+			box-shadow: 0 2px 10px #000;
+		}
+	}
+	#dateFloat {
+		margin-top: 40px;
+	}
+	#cloudFloat {
+		margin-left: auto;
+		margin-top: 90px;
+	}
+	div.searchHolder {
+		left: auto;
+		z-index: 2;
+		right: 12px;
+		top: 70px;
+	}
+	.leaflet-control-zoom {
+		display: none;
+	}
+	#toggleSettings {
+		display: block;
+		position: absolute;
+		left: 23px;
+		top: 30px;
+		color: #fff;
+		background: $mainMedium;
+		border-radius: 40px;
+		height: 30px;
+		width: 30px;
+		text-align: center;
+		line-height: 30px;
+		cursor: pointer;
+		z-index: 2;
+		transition: all ease 0.4s;
+
+		&.open {
+			box-shadow: 0 2px 10px #000;
+			left: 15px;
+			top: 15px;
+			width: 40px;
+			height: 40px;
+			line-height: 40px;
+		}
+	}
+
+	#tabs ul.ui-widget-header li a > * {
+		display: inline-block;
+		vertical-align: middle;
+		font-size: 15px;
+		margin-right: 5px;
+	}
+	.colorsContainer div {
+		width: 30px;
+		height: 30px;
+		margin: 5px;
+		line-height: 30px;
+	}
+	.colHolder, .colHolder div {
+		width: 35px;
+		height: 35px;
+		line-height: 35px;
+	}
+	#aboutSentinel {
+		left: auto;
+		right: 0;
+		bottom: 20px;
+	}
+} 
+@media screen and (min-width: 700px) {
+	#cloudSliderVal {
+		display: inline-block;
+		vertical-align: middle;
+		padding: 5px;
+		width: 60px;
+	}
+	#floatSettings {
+		margin-left: 15px !important;
+	}
+
+}
