@@ -1,3 +1,5 @@
+**IMPORTANT**: This version of the app is deprecated, new development is happening in React: [Sentinel Playground](https://github.com/sinergise/SentinelPlayground)
+
 Sentinel Playground version with [jQuery](https://jquery.com/). It uses NodeJS and Webpack to generate whole bundle.
 
 <img src='http://www.sentinel-hub.com/sites/default/files/sentinel-2_viewer_animation_3.gif' alt='Sentinel Playground' />
